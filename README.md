@@ -1,6 +1,6 @@
 # Uber_fares_analysis
 Analisis de tarifas en viajes deUber a partir de la base de datos Uber Fares Dataset, con datos para 200,000 viajes de la 
-aplicacion en la ciudad de Nueva York para los años 2009-2015, extraida de Kagge
+aplicacion en la ciudad de Nueva York para los años 2009-2015, extraida de Kaggle.com.
 
 Link para descargar la base, IMPORTANTE es necesario registrarse como usuario de Kaggle: 
 
