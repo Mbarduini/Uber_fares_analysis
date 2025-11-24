@@ -20,6 +20,8 @@ library(tidyverse)
 # Cargar base de datos Uber Fares Dataset, con datos para 200,000 viajes de la 
 # aplicacion en la ciudad de Nueva York para los años 2009-2015
 
+#descargar_base: https://www.kaggle.com/datasets/yasserh/uber-fares-dataset
+
 uber_fares <- read.csv("data/raw/uber.csv")
 
 # Convertir a tibble para mejor manejo con tidyverse

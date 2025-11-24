@@ -6,7 +6,11 @@
 # Última modificación: 2025-11-25
 # Descripción: Análisis de tarifas de viajes en Uber en NYC (2009-2015)
 # Inputs: uber_fares_dataset_variables.csv
-# Outputs: uber_fares_dataset_variables.csv
+# Outputs: uber_dataset_limpio.csv
+#          estadisticas_descriptivas_tendencia central.csv, 
+#          estadisticas_descriptivas_posicion y forma.csv,
+#          tabla_anios.csv, tabla_dias_semana.csv,
+#          tabla_horas.csv, tabla_pasajeros.csv
 # =============================================================================
 
 # Cargar librerias
@@ -55,20 +59,20 @@ cat("Porcentaje total de datos faltantes:",
 
 #Funcion de respuesta para el patrón de datos faltantes
 if(sum(datos_faltantes$N_Faltantes) > 0) {
-  cat("### 2.2. FILAS CON DATOS FALTANTES ###\n")
+  cat("### FILAS CON DATOS FALTANTES ###\n")
   filas_con_na <- uber_fares[!complete.cases(uber_fares_dataset_variables), ]
   cat("Número de filas con al menos un dato faltante:", nrow(filas_con_na), "\n")
   cat("Porcentaje de filas con datos faltantes:", 
       round(nrow(filas_con_na)/nrow(uber_fares_dataset_variables)*100, 2), "%\n\n")
 } else {
-  cat("### 2.2. NO SE DETECTARON DATOS FALTANTES EN LA BASE DE DATOS ###\n\n")
+  cat("### NO SE DETECTARON DATOS FALTANTES EN LA BASE DE DATOS ###\n\n")
 }
 
 # =============================================================================
 # 2. ANÁLISIS DE VALORES ANÓMALOS ESPECÍFICOS (OUTLIERS)
 # =============================================================================
 
-cat("### 5.1. VALORES NEGATIVOS O CERO (OUTLIERS)###\n")
+cat("### VALORES NEGATIVOS O CERO (OUTLIERS)###\n")
 cat("Tarifas <= 0:", sum(uber_fares_dataset_variables$fare_amount <= 0, na.rm = TRUE), 
     "(", round(sum(uber_fares_dataset_variables$fare_amount <= 0, 
                    na.rm = TRUE)/nrow(uber_fares_dataset_variables)*100, 2), "%)\n")
@@ -79,7 +83,7 @@ cat("Pasajeros = 0:", sum(uber_fares_dataset_variables$passenger_count == 0, na.
     "(", round(sum(uber_fares_dataset_variables$passenger_count == 0, 
                    na.rm = TRUE)/nrow(uber_fares_dataset_variables)*100, 2), "%)\n\n")
 
-cat("### 5.2. VALORES EXTREMOS (OUTLIERS) ###\n")
+cat("### VALORES EXTREMOS (OUTLIERS) ###\n")
 cat("Tarifas > $200:", sum(uber_fares_dataset_variables$fare_amount > 200, na.rm = TRUE),
     "(", round(sum(uber_fares_dataset_variables$fare_amount > 200, 
                    na.rm = TRUE)/nrow(uber_fares_dataset_variables)*100, 2), "%)\n")
@@ -98,7 +102,7 @@ cat(sprintf("Se elige el valor $200 para el corte de tarifas por viaje, que repr
             mean(viajes_200$distance_km, na.rm = TRUE)))
 
 
-cat("### 5.3. COORDENADAS INVÁLIDAS O FUERA DE RANGO NYC ###\n")
+cat("### COORDENADAS INVÁLIDAS O FUERA DE RANGO NYC ###\n")
 # NYC aproximadamente: Longitud [-74.3, -73.7], Latitud [40.5, 40.9]
 coords_invalidas <- uber_fares_dataset_variables %>%
   filter(pickup_longitude < -74.3 | pickup_longitude > -73.7 |
