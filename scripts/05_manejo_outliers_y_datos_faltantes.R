@@ -7,8 +7,8 @@
 # Descripción: Análisis de tarifas de viajes en Uber en NYC (2009-2015)
 # Inputs: uber_fares_dataset_variables.csv
 # Outputs: uber_dataset_limpio.csv
-#          estadisticas_descriptivas_tendencia central.csv, 
-#          estadisticas_descriptivas_posicion y forma.csv,
+#          estadisticas_descriptivas_tendencia_central.csv, 
+#          estadisticas_descriptivas_posicion_y_forma.csv,
 #          tabla_anios.csv, tabla_dias_semana.csv,
 #          tabla_horas.csv, tabla_pasajeros.csv
 # =============================================================================
@@ -31,7 +31,7 @@ uber_fares_dataset_variables <- read.csv("data/processed/uber_fares_dataset_vari
 
 #Cargar funciones de visualización
 
-source(file.path("funciones", "visualizacion_funciones.R"))
+source(file.path("functions", "visualizacion_funciones.R"))
 
 
 # Verificar dimensiones de la base
@@ -226,7 +226,7 @@ tabla_parte2_clean <- tabla_completa_formatted_clean %>%
 
 # GUARDAR TABLA 1: Tendencia Central y Dispersión
 
-write.csv(tabla_parte1_clean, "data/processed/tabla_estadisticas_descriptivas_tendencia central.csv", row.names = FALSE)
+write.csv(tabla_parte1_clean, "data/processed/tabla_estadisticas_descriptivas_tendencia_central.csv", row.names = FALSE)
 
 png("outputs/tables/estadisticas_descriptivas_tendencia central.png", 
     width = 1200, height = 500, res = 120)
@@ -240,7 +240,7 @@ dev.off()
 
 # GUARDAR TABLA 2: Posición y Forma
 
-write.csv(tabla_parte2_clean, "data/processed/tabla_estadisticas_descriptivas_posicion y forma.csv", row.names = FALSE)
+write.csv(tabla_parte2_clean, "data/processed/tabla_estadisticas_descriptivas_posicion_y_forma.csv", row.names = FALSE)
 
 png("outputs/tables/estadisticas_descriptivas_posicion y forma.png", 
     width = 1200, height = 500, res = 120)
@@ -353,9 +353,9 @@ png("outputs/tables/tabla_anios_clean.png", width = 800, height = 400, res = 120
 grid.table(tabla_anios_clean, rows = NULL, theme = theme_uber_table)
 dev.off()
 
-#============================================================================================
-
+cat("\n=======================================================================================\n")
 cat("\n\n========== COMPARATIVA ESTADÍSTICAS DESCRIPTIVAS - VARIABLES CATEGORICAS ==========\n\n")
+cat("\n=======================================================================================\n")
 
 
 cat("\n\n========== TABLAS DE FRECUENCIA PREVIO A LIMPIEZA - PASAJEROS ==========\n\n")
@@ -364,15 +364,14 @@ read.csv("data/processed/tabla_frecuencia_pasajeros_unfiltered.csv")
 cat("\n\n========== TABLAS DE FRECUENCIA LUEGO DE LIMPIEZA - PASAJEROS ==========\n\n")
 print(tabla_pasajeros_clean)
 
-#============================================================================================
 
 cat("\n\n========== TABLAS DE FRECUENCIA PREVIO A LIMPIEZA - HORAS DEL DÍA ==========\n\n")
+
 read.csv("data/processed/tabla_frecuencia_horas_unfiltered.csv")
 
 cat("\n\n========== TABLAS DE FRECUENCIA LUEGO DE LIMPIEZA - HORAS DEL DÍA ==========\n\n")
 print(tabla_horas_clean)
 
-#============================================================================================
 
 cat("\n\n========== TABLAS DE FRECUENCIA PREVIO A LIMPIEZA - DÍAS DE LA SEMANA ==========\n\n")
 read.csv("data/processed/tabla_frecuencia_dias_semana_unfiltered.csv")
@@ -380,7 +379,6 @@ read.csv("data/processed/tabla_frecuencia_dias_semana_unfiltered.csv")
 cat("\n\n========== TABLAS DE FRECUENCIA LUEGO DE LIMPIEZA - DÍAS DE LA SEMANA ==========\n\n")
 print(tabla_dias_clean)
 
-#============================================================================================
 
 cat("\n\n========== TABLAS DE FRECUENCIA PREVIO A LIMPIEZA - ANIOS ==========\n\n")
 read.csv("data/processed/tabla_frecuencia_anios_unfiltered.csv")
@@ -388,5 +386,4 @@ read.csv("data/processed/tabla_frecuencia_anios_unfiltered.csv")
 cat("\n\n========== TABLAS DE FRECUENCIA LUEGO DE LIMPIEZA - ANIOS ==========\n\n")
 print(tabla_anios_clean)
 
-#============================================================================================
 

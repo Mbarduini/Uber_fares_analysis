@@ -7,10 +7,10 @@
 # Descripción: Análisis de tarifas de viajes en Uber en NYC (2009-2015)
 # Inputs: uber_fares_dataset_variables.csv
 # 
-# Outputs: estadisticas_descriptivas_tendencia central.png, 
-#          estadisticas_descriptivas_posicion y forma.png,
-#          tabla_anios.png, tabla_dias_semana.png,
-#          tabla_horas.png, tabla_pasajeros.png
+# Outputs: estadisticas_descriptivas_tendencia central_unifiltered.csv, 
+#          estadisticas_descriptivas_posicion y forma_unifiltered.csv,
+#          tabla_anios_unifiltered.csv, tabla_dias_semana_unifiltered.csv,
+#          tabla_horas_unifiltered.csv, tabla_pasajeros_unifiltered.csv
 #          matriz_correlacion_unfiltered.csv
 # =============================================================================
 

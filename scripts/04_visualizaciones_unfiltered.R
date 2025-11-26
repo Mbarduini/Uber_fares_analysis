@@ -30,7 +30,7 @@ uber_fares_dataset_variables <- read.csv("data/processed/uber_fares_dataset_vari
 
 #Cargar funciones de visualización
 
-source(file.path("funciones", "visualizacion_funciones.R"))
+source(file.path("functions", "visualizacion_funciones.R"))
 
 # =============================================================================
 # 2. VISUALIZACIÓN CORRELACIÓN: HEATMAP DE ESTILO SEABORN

@@ -6,6 +6,7 @@
 # Última modificación: 2025-11-25
 # Descripción: Análisis de tarifas de viajes en Uber en NYC (2009-2015)
 # Inputs:  uber_dataset_limpio.csv
+#          tabla_estadisticas_descriptivas_posicion_y_forma.csv
 # Outputs: uber_dataset_limpio_hipotesis.csv
 #          tabla_coeficientes_regresion.png
         
@@ -34,7 +35,7 @@ uber_dataset_limpio <- read.csv(file_path)
 # Asegurar que time_period es un factor
 uber_dataset_limpio$time_period <- as.factor(uber_dataset_limpio$time_period)
 
-source(file.path("funciones", "visualizacion_funciones.R"))
+source(file.path("functions", "visualizacion_funciones.R"))
 
 # ============================================================================
 # 2. REGRESIÓN LINEAL: TARIFA vs. DISTANCIA
@@ -149,6 +150,7 @@ cat(sprintf("• R² Ajustado = %.4f\n", summary(modelo_loglog)$adj.r.squared))
 cat(sprintf("• Error Estándar Residual = $%.4f\n", summary(modelo_loglog)$sigma))
 cat(sprintf("• N = %d observaciones\n", nobs(modelo_loglog)))
 cat("────────────────────────────────────────────────────────\n")
+
 
 # =============================================================================
 # 3. TEST DE HIPOTESIS - SURGE PRICING DE TARIFAS POR PERIODO DEL DÍA
@@ -338,5 +340,7 @@ if (t_test_result$p.value < 0.05) {
   cat("\n• NO se rechaza H₀: No hay diferencias estadísticamente significativas\n")
   cat("• El horario pico/valle no es un predictor significativo del precio\n")
 }
+
+write.csv(uber_dataset_limpio_hipotesis, "data/processed/uber_dataset_limpio_hipotesis.csv")
 
 #=================================================================================

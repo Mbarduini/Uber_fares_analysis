@@ -6,7 +6,7 @@
 # Última modificación: 2025-11-25
 # Descripción: Análisis de tarifas de viajes en Uber en NYC (2009-2015)
 # Inputs: uber_fares_dataset.csv
-# Outputs: uber_fares_variables.csv
+# Outputs: uber_fares_dataset_variables.csv
 # =============================================================================
 
 #Cargar librerías
