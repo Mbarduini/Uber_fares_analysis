@@ -65,7 +65,7 @@ La estructura del repositorio sigue la metodología de análisis, lo que facilit
 | &nbsp;&nbsp;`07_estadistica inferencial.R` | Regresión Log-Log y T-Test de Welch para la prueba de hipótesis del *surge pricing*. |
 | `outputs/figures/` | Figuras y gráficos generados por los scripts de visualización. |
 | `outputs/tables/` | Tablas de estadísticas generadas en formato PNG. |
-| `functions/` | funciones auxiliares para los scripts de visualización. |
+| `functions/` | Funciones auxiliares para los scripts de visualización. |
 ---
 
 ## Instrucciones para la Reproducción del Análisis
@@ -74,7 +74,7 @@ Link para la base de datos en Kaggle:
 
 https://www.kaggle.com/datasets/yasserh/uber-fares-dataset
 
-**ACLARACIÓN**: Es necesario crearse un usuario en la página para poder descargar la base.
+**ACLARACIÓN**: Es necesario regustrarse como usuario en la página para poder descargar la base.
 
 Para ejecutar el flujo de trabajo completo y replicar todos los resultados:
 
