@@ -69,9 +69,7 @@ uber_fares_dataset_variables <- uber_fares_dataset_time %>%
                           breaks = c(0, 2, 5, 10, 20, Inf),
                           labels = c("0-2 km", "2-5 km", "5-10 km", 
                                      "10-20 km", ">20 km"),
-                          include.lowest = TRUE),
-    # Calcular tarifa por kilómetro
-    fare_per_km = fare_amount / (distance_km + 0.1)  # +0.1 para evitar división por 0
+                          include.lowest = TRUE)
   )
 
 glimpse(uber_fares_dataset_variables)

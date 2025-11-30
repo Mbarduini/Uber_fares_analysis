@@ -29,7 +29,7 @@ library(corrplot)
 
 #Cargar funciones de visualización
 
-source(file.path("funciones", "visualizacion_funciones.R"))
+source(file.path("functions", "visualizacion_funciones.R"))
 
 # =============================================================================
 # 1. CARGA DE LA BASE DE DATOS
@@ -54,7 +54,7 @@ cat("\n\n========== ESTADÍSTICAS DESCRIPTIVAS - VARIABLES NUMÉRICAS SELECCIONA
 
 # Variables numéricas de interés
 variables_numericas <- c("fare_amount",
-                         "distance_km", "fare_per_km")
+                         "distance_km")
 
 
 # Función para calcular la moda
@@ -98,17 +98,16 @@ crea_tabla_estadistica_descriptiva <- function(data, variable) {
 tabla_completa <- do.call(rbind, lapply(variables_numericas, 
                                         function(v) crea_tabla_estadistica_descriptiva(uber_fares_dataset_variables, v)))
 
-# Renombrar variables a español
 tabla_completa_formatted <- tabla_completa %>%
   mutate(
-    Variable = recode(Variable,
-                      "fare_amount" = "Tarifa",
-                      "distance_km" = "Distancia (km)",
-                      "fare_per_km" = "Tarifa por Km")
+    Variable = case_when(
+      Variable == "fare_amount" ~ "Tarifa",
+      Variable == "distance_km" ~ "Distancia (km)",
+      TRUE ~ Variable
+    )
   ) %>%
-#Redondear solo columnas numéricas, excluir nombre variables
+  # Redondear solo columnas numéricas
   mutate(across(where(is.numeric), ~round(., 4)))
-
 
 print(tabla_completa_formatted)
 
@@ -128,7 +127,9 @@ tabla_parte2 <- tabla_completa_formatted %>%
 write.csv(tabla_parte1, "data/processed/tabla_estadisticas_descriptivas_tendencia central_unfiltered.csv", row.names = FALSE)
 
 png("outputs/tables/estadisticas_descriptivas_tendencia central_unfiltered.png", 
-    width = 1200, height = 500, res = 120)
+    width = 900, height = 100, res = 120)
+
+par(mar = c(1, 1, 1, 1))
 
 grid.table(tabla_parte1, 
            rows = NULL,
@@ -142,7 +143,7 @@ dev.off()
 write.csv(tabla_parte2, "data/processed/tabla_estadisticas_descriptivas_posicion y forma_unfiltered.csv", row.names = FALSE)
 
 png("outputs/tables/estadisticas_descriptivas_posicion y forma_unfiltered.png", 
-    width = 1200, height = 500, res = 120)
+    width = 1000, height = 100, res = 120)
 
 grid.table(tabla_parte2, 
            rows = NULL,

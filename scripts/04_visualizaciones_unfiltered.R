@@ -40,7 +40,7 @@ source(file.path("functions", "visualizacion_funciones.R"))
 vars_correlacion <- uber_fares_dataset_variables %>%
   select(distance_km, pickup_latitude, dropoff_latitude,
          pickup_longitude, dropoff_longitude, 
-         hour, fare_amount, fare_per_km) %>%
+         hour, fare_amount) %>%
   na.omit()
 
 # Calcular matriz de correlación
@@ -63,8 +63,7 @@ nombres_espanol <- c(
   "pickup_longitude" = "Long. Origen",
   "dropoff_longitude" = "Long. Destino",
   "hour" = "Hora del día",
-  "fare_amount" = "Tarifa",
-  "fare_per_km" = "Tarifa por km"
+  "fare_amount" = "Tarifa"
 )
 
 # Renombrar variables manteniendo el orden original
@@ -146,7 +145,7 @@ histograma_fare <- ggplot(uber_fares_dataset_variables %>%
              linetype = "dashed", 
              linewidth = 1) +
   scale_x_continuous(expand = c(0, 0), limits = c(0, NA),labels = scales::dollar_format(prefix = "$")) +
-  scale_y_continuous(expand = expansion(mult = c(0, 0.1)), limits = c(0, NA), labels = scales::comma)+
+  scale_y_continuous(expand = expansion(mult = c(0, 0.1)), breaks = seq(0, 150000, by = 25000), limits = c(0, NA), labels = scales::comma)+
   theme_uber() +
   theme(
     plot.margin = margin(40, 25, 20, 20),  # Aún más espacio superior
@@ -293,7 +292,7 @@ boxplot_tarifas <- ggplot(uber_fares_dataset_variables %>%
                size = 4, 
                fill = colores_uber["acento"], 
                color = colores_uber["secundario"]) +
-  scale_y_continuous(labels = scales::dollar_format(prefix = "$")) +
+  scale_y_continuous(breaks = seq(0, 500, by = 50), labels = scales::dollar_format(prefix = "$")) +
   theme_uber() +
   theme(
     plot.margin = margin(40, 25, 20, 20),
@@ -302,7 +301,7 @@ boxplot_tarifas <- ggplot(uber_fares_dataset_variables %>%
   labs(
     title = "Boxplot de Tarifas - Viajes Uber",
     subtitle = "Análisis de dispersión y valores atípicos\nRombo naranja = Media | Puntos naranja = Outliers",
-    x = "Distribución",
+    x = NULL,
     y = "Tarifa (USD)"
   ) +
   coord_flip()
@@ -314,49 +313,43 @@ ggsave("outputs/figures/boxplot_tarifas_unfiltered.png",
 
 
 # ===================================================================================
-# 7. VISUALIZACIÓN: BOXPLOT PARA TARIFAS POR RANGO DISTANCIAS
+# 7. VISUALIZACIÓN: BOXPLOT PARA DISTANCIA
 # ===================================================================================
 
 
-boxplot_tarifas_distancia <- ggplot(uber_fares_dataset_variables %>% 
-                                      filter(fare_amount > 0, distance_km > 0) %>% 
-                                      mutate(rango_distancia = factor(rango_distancia,
-                                                                    levels = c("0-2 km", "2-5 km", "5-10 km", 
-                                                                               "10-20 km", ">20 km"))), 
-                                    aes(x = rango_distancia, 
-                                        y = fare_amount, 
-                                        fill = rango_distancia)) +
-  geom_boxplot(alpha = 0.7, 
-               outlier.color = colores_uber["acento"], 
-               outlier.size = 0.8,
-               color = colores_uber["oscuro"]) +
+
+boxplot_distancia <- ggplot(uber_fares_dataset_variables %>% 
+                            filter(distance_km > 0), 
+                          aes(x = "", y = distance_km)) +
+  geom_boxplot(fill = colores_uber["primario"], 
+               color = colores_uber["secundario"],
+               alpha = 0.7, 
+               outlier.color = colores_uber["acento"],
+               outlier.size = 1.5) +
   stat_summary(fun = mean, 
                geom = "point", 
                shape = 23, 
-               size = 3, 
-               fill = colores_uber["acento"],
+               size = 4, 
+               fill = colores_uber["acento"], 
                color = colores_uber["secundario"]) +
-  scale_fill_manual(values = colorRampPalette(c(colores_uber["primario"], 
-                                                colores_uber["secundario"], 
-                                                colores_uber["oscuro"]))(5)) +
-  scale_y_continuous(labels = scales::dollar_format(prefix = "$")) +
+  scale_y_continuous(breaks = seq(0, 10000, by = 1000)) +
   theme_uber() +
   theme(
-    legend.position = "none",
-    plot.margin = margin(40, 25, 20, 20),
-    axis.text.x = element_text(margin = margin(t = 5)),
-    axis.text.y = element_text(margin = margin(r = 5))
+    plot.margin = margin(20, 25, 20, 20),
+    axis.ticks.x = element_blank()
   ) +
   labs(
-    title = "Distribución de Tarifas por Distancia de Viaje",
-    subtitle = "Rombo naranja = Media por rango de distancia | Puntos naranja = Outliers",
+    title = "Boxplot de Distancia - Viajes Uber",
+    subtitle = "Análisis de dispersión y valores atípicos\nRombo naranja = Media | Puntos naranja = Outliers",
     x = NULL,
-    y = "Tarifa (USD)"
-  )
+    y = "Distancia (en Km)"
+  ) +
+  coord_flip()
 
-print(boxplot_tarifas_distancia)
-ggsave("outputs/figures/boxplot_tarifas_por_distancia_unfiltered.png", 
-       boxplot_tarifas_distancia, width = 10, height = 6, dpi = 300)
+print(boxplot_distancia)
+ggsave("outputs/figures/boxplot_distancia_unfiltered.png", 
+       boxplot_distancia, 
+       width = 10, height = 4, dpi = 300)
 
 
 # ===================================================================================

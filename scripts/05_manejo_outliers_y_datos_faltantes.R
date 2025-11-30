@@ -7,8 +7,8 @@
 # Descripción: Análisis de tarifas de viajes en Uber en NYC (2009-2015)
 # Inputs: uber_fares_dataset_variables.csv
 # Outputs: uber_dataset_limpio.csv
-#          estadisticas_descriptivas_tendencia_central.csv, 
-#          estadisticas_descriptivas_posicion_y_forma.csv,
+#          estadisticas_descriptivas_tendencia central.csv, 
+#          estadisticas_descriptivas_posicion y forma.csv,
 #          tabla_anios.csv, tabla_dias_semana.csv,
 #          tabla_horas.csv, tabla_pasajeros.csv
 # =============================================================================
@@ -26,6 +26,8 @@ library(scales)
 # =============================================================================
 # 1. CARGA DE LA BASE DE DATOS
 # =============================================================================
+
+uber_fares_dataset <- read.csv("data/processed/uber_fares_dataset.csv")
 
 uber_fares_dataset_variables <- read.csv("data/processed/uber_fares_dataset_variables.csv")
 
@@ -84,8 +86,8 @@ cat("Pasajeros = 0:", sum(uber_fares_dataset_variables$passenger_count == 0, na.
                    na.rm = TRUE)/nrow(uber_fares_dataset_variables)*100, 2), "%)\n\n")
 
 cat("### VALORES EXTREMOS (OUTLIERS) ###\n")
-cat("Tarifas > $200:", sum(uber_fares_dataset_variables$fare_amount > 200, na.rm = TRUE),
-    "(", round(sum(uber_fares_dataset_variables$fare_amount > 200, 
+cat("Tarifas > $60:", sum(uber_fares_dataset_variables$fare_amount > 60, na.rm = TRUE),
+    "(", round(sum(uber_fares_dataset_variables$fare_amount > 60, 
                    na.rm = TRUE)/nrow(uber_fares_dataset_variables)*100, 2), "%)\n")
 cat("Distancias > 100 km:", sum(uber_fares_dataset_variables$distance_km > 100, na.rm = TRUE),
     "(", round(sum(uber_fares_dataset_variables$distance_km > 100, 
@@ -95,11 +97,11 @@ cat("Pasajeros > 6:", sum(uber_fares_dataset_variables$passenger_count > 6, na.r
                    na.rm = TRUE)/nrow(uber_fares_dataset_variables)*100, 2), "%)\n\n")
 
 
-viajes_200 <- uber_fares_dataset_variables %>% filter(fare_amount > 200)
+viajes_60 <- uber_fares_dataset_variables %>% filter(fare_amount > 60)
 
-cat(sprintf("Se elige el valor $200 para el corte de tarifas por viaje, que representa el: %.4f%% de la muestra\ncon una distancia de viaje promedio de %.2f km\n",
-            nrow(viajes_200) / nrow(uber_fares_dataset_variables) * 100,
-            mean(viajes_200$distance_km, na.rm = TRUE)))
+cat(sprintf("Se elige el valor $60 para el corte de tarifas por viaje, los viajes que igualan o superan esa tarifa representan el: %.4f%% de la muestra\ncon una distancia de viaje promedio de %.2f km\n",
+            nrow(viajes_60) / nrow(uber_fares_dataset_variables) * 100,
+            mean(viajes_60$distance_km, na.rm = TRUE)))
 
 
 cat("### COORDENADAS INVÁLIDAS O FUERA DE RANGO NYC ###\n")
@@ -127,7 +129,7 @@ cat("Total de viajes registrados sin limpieza:", total_registros)
     # Crear dataset filtrado 
 uber_dataset_limpio <- uber_fares_dataset_variables %>%
   filter(fare_amount > 0,                                   # Eliminar tarifas <= 0
-         fare_amount < 200,                                 # Eliminar tarifas muy altas y poco representativas
+         fare_amount < 60,                                 # Eliminar tarifas muy altas y poco representativas
          distance_km != 0,                                  # Eliminar distancia 0, viajes cancelados y/o error de reporte
          pickup_longitude >= -74.3 & pickup_longitude <= -73.7,   # Coordenadas válidas para NYC
          pickup_latitude >= 40.5 & pickup_latitude <= 40.9,
@@ -138,7 +140,7 @@ uber_dataset_limpio <- uber_fares_dataset_variables %>%
          passenger_count != 0, passenger_count <= 6)        # Eliminar errores de reporte para pasajeros
 
 
-write.csv(uber_dataset_limpio, "data/processed/uber_dataset_limpio.csv", row.names = FALSE)
+write.csv(uber_dataset_limpio, "data/clean/uber_dataset_limpio.csv", row.names = FALSE)
 
 
 # ============================================================================
@@ -147,7 +149,7 @@ write.csv(uber_dataset_limpio, "data/processed/uber_dataset_limpio.csv", row.nam
 
 
 cat("\n\n===== IMPACTO GENERAL DE LA LIMPIEZA =====\n")
-cat(sprintf("Observaciones originales: %d\n", nrow(uber_fares_dataset_variables)))
+cat(sprintf("Observaciones originales: %d\n", nrow(uber_fares_dataset)))
 cat(sprintf("Observaciones finales: %d\n", nrow(uber_dataset_limpio)))
 cat(sprintf("Observaciones eliminadas: %d\n", nrow(uber_fares_dataset_variables) - nrow(uber_dataset_limpio)))
 cat(sprintf("Porcentaje retenido: %.2f%%\n", (nrow(uber_dataset_limpio) / nrow(uber_fares_dataset_variables)) * 100))
@@ -158,7 +160,7 @@ cat("\n\n========== ESTADÍSTICAS DESCRIPTIVAS LUEGO DE LIMPIEZA- VARIABLES NUM�
 
 # Variables numéricas de interés
 variables_numericas <- c("fare_amount",
-                         "distance_km", "fare_per_km")
+                         "distance_km")
 
 
 # Función para calcular la moda
@@ -226,7 +228,7 @@ tabla_parte2_clean <- tabla_completa_formatted_clean %>%
 
 # GUARDAR TABLA 1: Tendencia Central y Dispersión
 
-write.csv(tabla_parte1_clean, "data/processed/tabla_estadisticas_descriptivas_tendencia_central.csv", row.names = FALSE)
+write.csv(tabla_parte1_clean, "data/processed/tabla_estadisticas_descriptivas_tendencia central.csv", row.names = FALSE)
 
 png("outputs/tables/estadisticas_descriptivas_tendencia central.png", 
     width = 1200, height = 500, res = 120)
@@ -240,7 +242,7 @@ dev.off()
 
 # GUARDAR TABLA 2: Posición y Forma
 
-write.csv(tabla_parte2_clean, "data/processed/tabla_estadisticas_descriptivas_posicion_y_forma.csv", row.names = FALSE)
+write.csv(tabla_parte2_clean, "data/processed/tabla_estadisticas_descriptivas_posicion y forma.csv", row.names = FALSE)
 
 png("outputs/tables/estadisticas_descriptivas_posicion y forma.png", 
     width = 1200, height = 500, res = 120)
@@ -332,30 +334,9 @@ png("outputs/tables/tabla_dias_clean_semana.png", width = 800, height = 400, res
 grid.table(tabla_dias_clean, rows = NULL, theme = theme_uber_table)
 dev.off()
 
-# Frecuencias por año
-cat("\n\nFRECUENCIA POR ANIO:\n")
-tabla_anios_clean <- uber_dataset_limpio %>%
-  count(year) %>%
-  arrange(year) %>%
-  mutate(
-    Porcentaje = round((n / sum(n)) * 100,3),
-    Porcentaje_Acumulado = round(cumsum(Porcentaje),3)
-  ) %>%
-  rename(
-    `Año` = year,           # Renombrar año para mejor presentación
-    `Frecuencia` = n        # Renombrar n para mejor presentación
-  )
+#============================================================================================
 
-print(tabla_anios_clean)
-write.csv(tabla_anios_clean, "data/processed/tabla_frecuencia_anios.csv", row.names = FALSE)
-
-png("outputs/tables/tabla_anios_clean.png", width = 800, height = 400, res = 120)
-grid.table(tabla_anios_clean, rows = NULL, theme = theme_uber_table)
-dev.off()
-
-cat("\n=======================================================================================\n")
 cat("\n\n========== COMPARATIVA ESTADÍSTICAS DESCRIPTIVAS - VARIABLES CATEGORICAS ==========\n\n")
-cat("\n=======================================================================================\n")
 
 
 cat("\n\n========== TABLAS DE FRECUENCIA PREVIO A LIMPIEZA - PASAJEROS ==========\n\n")
@@ -364,14 +345,15 @@ read.csv("data/processed/tabla_frecuencia_pasajeros_unfiltered.csv")
 cat("\n\n========== TABLAS DE FRECUENCIA LUEGO DE LIMPIEZA - PASAJEROS ==========\n\n")
 print(tabla_pasajeros_clean)
 
+#============================================================================================
 
 cat("\n\n========== TABLAS DE FRECUENCIA PREVIO A LIMPIEZA - HORAS DEL DÍA ==========\n\n")
-
 read.csv("data/processed/tabla_frecuencia_horas_unfiltered.csv")
 
 cat("\n\n========== TABLAS DE FRECUENCIA LUEGO DE LIMPIEZA - HORAS DEL DÍA ==========\n\n")
 print(tabla_horas_clean)
 
+#============================================================================================
 
 cat("\n\n========== TABLAS DE FRECUENCIA PREVIO A LIMPIEZA - DÍAS DE LA SEMANA ==========\n\n")
 read.csv("data/processed/tabla_frecuencia_dias_semana_unfiltered.csv")
@@ -379,11 +361,6 @@ read.csv("data/processed/tabla_frecuencia_dias_semana_unfiltered.csv")
 cat("\n\n========== TABLAS DE FRECUENCIA LUEGO DE LIMPIEZA - DÍAS DE LA SEMANA ==========\n\n")
 print(tabla_dias_clean)
 
-
-cat("\n\n========== TABLAS DE FRECUENCIA PREVIO A LIMPIEZA - ANIOS ==========\n\n")
-read.csv("data/processed/tabla_frecuencia_anios_unfiltered.csv")
-
-cat("\n\n========== TABLAS DE FRECUENCIA LUEGO DE LIMPIEZA - ANIOS ==========\n\n")
-print(tabla_anios_clean)
+#============================================================================================
 
 

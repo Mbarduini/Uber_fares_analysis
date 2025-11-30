@@ -27,7 +27,7 @@ library(corrplot)
 # 1. CARGA DE LA BASE DE DATOS
 # =============================================================================
 
-uber_dataset_limpio <- read.csv("data/processed/uber_dataset_limpio.csv")
+uber_dataset_limpio <- read.csv("data/clean/uber_dataset_limpio.csv")
 
 #Cargar funciones de visualización
 
@@ -41,7 +41,7 @@ source(file.path("functions", "visualizacion_funciones.R"))
 vars_correlacion <- uber_dataset_limpio %>%
   select(distance_km, pickup_latitude, dropoff_latitude,
          pickup_longitude, dropoff_longitude, 
-         hour, fare_amount, fare_per_km) %>%
+         hour, fare_amount) %>%
   na.omit()
 
 # Calcular matriz de correlación
@@ -64,8 +64,7 @@ nombres_espanol <- c(
   "pickup_longitude" = "Long. Origen",
   "dropoff_longitude" = "Long. Destino",
   "hour" = "Hora del día",
-  "fare_amount" = "Tarifa",
-  "fare_per_km" = "Tarifa por km"
+  "fare_amount" = "Tarifa"
 )
 
 # Renombrar variables manteniendo el orden original
@@ -179,7 +178,7 @@ datos_hora <- uber_dataset_limpio %>%
   count(hour, name = "Frecuencia")
 
 # Definir las horas a resaltar
-horas_pico_manana <- c(7, 8, 9)
+horas_pico_manana <- c(7, 8, 9, 10)
 horas_pico_tarde <- c(17, 18, 19, 20)
 
 
@@ -226,7 +225,7 @@ histograma_hora <- histograma_hora +
   ) +
   labs(
     title = "Demanda de Viajes por Hora del Día",
-    subtitle = "Horas pico destacadas: Mañana (7-9h) y Tarde (17-20h)",
+    subtitle = "Horas pico destacadas: Mañana (7-10h) y Tarde (17-20h)",
     x = NULL,
     y = "Número de viajes"
   )
@@ -296,7 +295,9 @@ boxplot_tarifas <- ggplot(uber_dataset_limpio %>%
                size = 4, 
                fill = colores_uber["acento"], 
                color = colores_uber["secundario"]) +
-  scale_y_continuous(labels = scales::dollar_format(prefix = "$")) +
+  scale_y_continuous(expand = c(0, 0), limits = c(0, 60),
+                     breaks = seq(0, 60, by = 5),
+                     labels = scales::dollar_format(prefix = "$")) +
   theme_uber() +
   theme(
     plot.margin = margin(20, 25, 20, 20),
@@ -342,7 +343,7 @@ boxplot_tarifas_distancia <- ggplot(uber_dataset_limpio %>%
                                                 colores_uber["secundario"], 
                                                 colores_uber["oscuro"]))(5)) +
   scale_y_continuous(labels = scales::dollar_format(prefix = "$"),
-                     limits = c(0, 100)) +
+                     limits = c(0, 60)) +
   theme_uber() +
   theme(
     legend.position = "none",
@@ -363,7 +364,46 @@ ggsave("outputs/figures/boxplot_tarifas_por_distancia.png",
 
 
 # ===================================================================================
-# 8. VISUALIZACIÓN: GRÁFICO DE FRECUENCIAS POR DÍA DE SEMANA
+# 8. VISUALIZACIÓN: BOXPLOT PARA DISTANCIA
+# ===================================================================================
+
+
+
+boxplot_distancia <- ggplot(uber_dataset_limpio %>% 
+                              filter(distance_km > 0), 
+                            aes(x = "", y = distance_km)) +
+  geom_boxplot(fill = colores_uber["primario"], 
+               color = colores_uber["secundario"],
+               alpha = 0.7, 
+               outlier.color = colores_uber["acento"],
+               outlier.size = 1.5) +
+  stat_summary(fun = mean, 
+               geom = "point", 
+               shape = 23, 
+               size = 4, 
+               fill = colores_uber["acento"], 
+               color = colores_uber["secundario"]) +
+  scale_y_continuous(breaks = seq(0, 30, by = 2)) +
+  theme_uber() +
+  theme(
+    plot.margin = margin(20, 25, 20, 20),
+    axis.ticks.x = element_blank()
+  ) +
+  labs(
+    title = "Boxplot de Distancia - Viajes Uber",
+    subtitle = "Análisis de dispersión y valores atípicos\nRombo naranja = Media | Puntos naranja = Outliers",
+    x = NULL,
+    y = "Distancia (en Km)"
+  ) +
+  coord_flip()
+
+print(boxplot_distancia)
+ggsave("outputs/figures/boxplot_distancia.png", 
+       boxplot_distancia, 
+       width = 10, height = 4, dpi = 300)
+
+# ===================================================================================
+# 9. VISUALIZACIÓN: GRÁFICO DE FRECUENCIAS POR DÍA DE SEMANA
 # ===================================================================================
 
 
@@ -475,56 +515,106 @@ ggsave("outputs/figures/barras_dias_semana.png", barras_dias_semana, width = 10,
 
 
 
+# ===================================================================================
+# 10. VISUALIZACIÓN: GRÁFICO DE FRECUENCIAS POR CANTIDAD DE PASAJEROS
+# ===================================================================================
 
+# Convertir passenger_count a factor
+uber_dataset_limpio$passenger_count <- factor(uber_dataset_limpio$passenger_count)
+table_pasajeros <- uber_dataset_limpio %>%
+  count(passenger_count) %>%
+  mutate(porcentaje = n / sum(n) * 100)
 
-
-
-
-
-
-
-# QQ-plot para evaluar normalidad de tarifas con tema Uber
-qqplot_tarifas <- ggplot(uber_dataset_limpio %>% 
-                           filter(fare_amount > 0 & fare_amount), 
-                         aes(sample = fare_amount)) +
-  stat_qq(color = colores_uber["primario"], 
-          alpha = 0.6,
-          size = 2) +
-  stat_qq_line(color = colores_uber["acento"], 
-               linewidth = 1.2) +
-  scale_x_continuous(labels = scales::comma) +
-  scale_y_continuous(labels = scales::comma) +
-  theme_uber() +
-  theme(
-    # Eliminar cuadrícula completamente
-    panel.grid.major = element_blank(),
-    panel.grid.minor = element_blank(),
-    panel.background = element_rect(fill = "white", color = NA),
-    plot.background = element_rect(fill = "white", color = NA),
-    
-    # Agregar líneas de eje elegantes
-    axis.line = element_line(color = colores_uber["oscuro"], linewidth = 0.6),
-    
-    # Mejorar texto de ejes
-    axis.text.x = element_text(margin = margin(t = 8), size = 11, face = "bold"),
-    axis.text.y = element_text(margin = margin(r = 8), size = 11, face = "bold"),
-    axis.title = element_text(size = 12, face = "bold"),
-    
-    # Márgenes y títulos
-    plot.margin = margin(40, 35, 30, 30),
-    plot.title = element_text(size = 15, face = "bold", 
-                              color = colores_uber["oscuro"],
-                              margin = margin(b = 8)),
-    plot.subtitle = element_text(size = 11, 
-                                 color = colores_uber["texto"],
-                                 margin = margin(b = 15))
+barras_pasajeros <- ggplot(table_pasajeros, aes(x = passenger_count, y = n)) +
+  
+  # Barras con color uniforme Uber
+  geom_bar(stat = "identity",
+           fill = "#1fbad6",
+           color = NA,
+           alpha = 0.85,
+           width = 0.7) +
+  
+  # Línea conectando los puntos máximos
+  geom_line(aes(group = 1), 
+            color = colores_uber["secundario"], 
+            linewidth = 2) +
+  
+  # Puntos en el máximo de cada barra
+  geom_point(size = 6, 
+             shape = 21, 
+             fill = "#ffa726", 
+             color = "white", 
+             stroke = 2) +
+  
+  # Etiquetas con cantidad y porcentaje
+  geom_text(aes(label = paste0(scales::comma(n, big.mark = "."), 
+                               "\n(", round(porcentaje, 1), "%)")), 
+            vjust = -0.8, 
+            size = 3.5,
+            fontface = "bold",
+            color = colores_uber["oscuro"]) +
+  
+  scale_y_continuous(
+    breaks = seq(0, max(table_pasajeros$n) + 10000, by = 10000),
+    expand = expansion(mult = c(0.02, 0.15)),
+    labels = scales::comma_format(big.mark = ".", decimal.mark = ",")
   ) +
+  scale_x_discrete(expand = expansion(add = c(0.7, 0.7))) +
+  
+  theme_uber(base_size = 12) +
+  theme(
+    axis.text.x = element_text(
+      angle = 0,
+      hjust = 0.5,
+      vjust = 0.5,
+      margin = margin(t = 8),
+      size = 11,
+      face = "bold",
+      color = colores_uber["oscuro"]
+    ),
+    axis.text.y = element_text(
+      margin = margin(r = 8),
+      size = 10
+    ),
+    axis.title.y = element_text(
+      margin = margin(r = 15),
+      size = 12,
+      face = "bold"
+    ),
+    axis.title.x = element_text(
+      margin = margin(t = 15),
+      size = 12,
+      face = "bold"
+    ),
+    plot.title = element_text(
+      hjust = 0.5,
+      size = 15,
+      face = "bold",
+      color = colores_uber["oscuro"],
+      margin = margin(b = 8)
+    ),
+    plot.subtitle = element_text(
+      hjust = 0.5,
+      size = 10,
+      color = colores_uber["texto"],
+      margin = margin(b = 25)
+    ),
+    plot.margin = margin(20, 40, 20, 20),  
+    legend.position = "none",
+    panel.grid.major.y = element_line(color = "#e8e8e8", linewidth = 0.3),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor = element_blank()
+  ) +
+  
   labs(
-    title = "Q-Q Plot de Tarifas - Viajes Uber",
-    subtitle = "Evaluación de normalidad | Línea naranja = Distribución normal teórica",
-    x = "Cuantiles Teóricos",
-    y = "Cuantiles de la Muestra"
-  )
+    title = "Distribución de Viajes por Número de Pasajeros",
+    subtitle = "Frecuencia y porcentaje de viajes según cantidad de pasajeros",
+    x = NULL,
+    y = NULL
+  ) +
+  coord_cartesian(clip = "off")  # Para que los elementos sobresalgan del área de plot
 
-print(qqplot_tarifas)
-ggsave("outputs/figures/qqplot_tarifas.png", qqplot_tarifas, width = 8, height = 8, dpi = 300)
+print(barras_pasajeros)
+
+ggsave("outputs/figures/barras_pasajeros.png", barras_pasajeros, width = 10, height = 6, dpi = 300)
+

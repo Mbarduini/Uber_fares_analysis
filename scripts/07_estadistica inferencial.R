@@ -29,7 +29,7 @@ library(grid)
 # 1. CARGA Y PREPARACIÓN DE DATOS
 # =============================================================================
 
-file_path <- "data/processed/uber_dataset_limpio.csv"
+file_path <- "data/clean/uber_dataset_limpio.csv"
 uber_dataset_limpio <- read.csv(file_path)
 
 # Asegurar que time_period es un factor
@@ -341,6 +341,6 @@ if (t_test_result$p.value < 0.05) {
   cat("• El horario pico/valle no es un predictor significativo del precio\n")
 }
 
-write.csv(uber_dataset_limpio_hipotesis, "data/processed/uber_dataset_limpio_hipotesis.csv")
+write.csv(uber_dataset_limpio_hipotesis, "data/clean/uber_dataset_limpio_hipotesis.csv")
 
 #=================================================================================
