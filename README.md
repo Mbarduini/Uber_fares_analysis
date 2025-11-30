@@ -2,7 +2,7 @@
 
 # Resumen del Proyecto
 
-Este proyecto realiza un análisis completo de un dataset de 200,000 viajes de Uber en la ciudad de Nueva York entre 2009 y 2015. 
+Este proyecto realiza un análisis completo de un dataset de 200,000 viajes de Uber en la ciudad de Nueva York entre enero de 2009 y junio de 2015. 
 
 El objetivo principal es explorar la relación entre la distancia, la hora del día y la tarifa cobrada, 
 y determinar si existe una diferencia estadísticamente significativa en las tarifas entre los períodos de alta y baja demanda (*surge pricing*).
@@ -65,7 +65,7 @@ La estructura del repositorio sigue la metodología de análisis, lo que facilit
 | &nbsp;&nbsp;`07_estadistica inferencial.R` | Regresión Log-Log y T-Test de Welch para la prueba de hipótesis del *surge pricing*. |
 | `outputs/figures/` | Figuras y gráficos generados por los scripts de visualización. |
 | `outputs/tables/` | Tablas de estadísticas generadas en formato PNG. |
-
+| `functions/` | funciones auxiliares para los scripts de visualización. |
 ---
 
 ## Instrucciones para la Reproducción del Análisis
@@ -81,7 +81,8 @@ Para ejecutar el flujo de trabajo completo y replicar todos los resultados:
 1.  **Descargar el Repositorio** y asegurarse de que el *dataset* original esté ubicado en `data/raw/uber.csv`.
 2.  **Abrir el Proyecto** en RStudio.
 3.  **Instalar las Dependencias** de R mencionadas.
-4.  **Ejecutar los *scripts* secuencialmente** en el siguiente orden:
+4.  **Replicar la estructura de carpetas** para almacenar los archivos.
+5.  **Ejecutar los *scripts* secuencialmente** en el siguiente orden:
 
     `01_cargar_datos.R`  
     
@@ -102,5 +103,5 @@ Para ejecutar el flujo de trabajo completo y replicar todos los resultados:
 ## Contacto
 
 * **Autores:** Mariela Arduini, Adriel Morrone
-* **Fecha de Creación:** 25-11-2025
+* **Fecha de Creación:** 30-11-2025
 * **Repositorio:** https://github.com/Mbarduini/Uber_fares_analysis
